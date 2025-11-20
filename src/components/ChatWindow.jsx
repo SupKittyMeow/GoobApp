@@ -1,18 +1,13 @@
 import '../App.css';
+import './ChatSendButton';
 
-const ChatWindow = () => {
-    // const inputRef = useRef(null); 
-    // const [inputValue, setInputValue] = useState('');
-
+function ChatWindow(messages) {
     return (
         <div
         id='chatWindow'
         className='chat-window'
         >
-            <p>wow</p>
-            <p>wow</p>
-            <p>wow</p>
-            <p>wow</p>
+        <p>{messages.length}</p>
         </div>
     )
 }

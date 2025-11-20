@@ -4,10 +4,10 @@ function ChatSendButton ({onSend}) {
     return (
         <button
         id='sendButton'
-        className='chat-button'
+        className='chat-extras-button'
         onClick={onSend}
         >
-        ↑
+        +
         </button>
     )
 }
