@@ -113,6 +113,7 @@ const ChatInput = forwardRef(({ onSend }: { onSend: () => void }, ref) => {
       <ChatExtrasButton></ChatExtrasButton>
       <span className="chat-input-div" role="textbox">
         <textarea
+          contentEditable="true"
           className="chat-input"
           id="chatInput"
           placeholder="Type here..."

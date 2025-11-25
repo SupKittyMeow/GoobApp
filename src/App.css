@@ -88,7 +88,7 @@
   border-radius: 10px;
 }
 
-.profile-picture-button {
+.profile-picture {
   grid-column: 2;
   margin: 0;
   width: 50px;
@@ -98,14 +98,4 @@
   border-radius: 100%;
   justify-self: end;
   margin-left: auto;
-}
-
-.profile-picture-image {
-  place-self: center;
-  margin: 0;
-  width: 50px;
-  height: 50px;
-  background-color: gray;
-  aspect-ratio: 1/1;
-  border-radius: 100%;
 }
