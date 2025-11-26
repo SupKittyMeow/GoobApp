@@ -152,8 +152,10 @@
 .profile-panel-profile-picture {
   aspect-ratio: 1/1;
   border-radius: 100%;
-  border: 3px dotted black;
+  border: 3px;
+  border-style: solid;
+  border-color: var(--secondary-color);
   width: 150px;
   height: 150px;
-  background-color: gray;
+  background-color: rgba(128, 128, 128, 0);
 }
