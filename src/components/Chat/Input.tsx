@@ -134,6 +134,12 @@ const ChatInput = forwardRef(({ onSend }: { onSend: () => void }, ref) => {
     }; // Once everything is done and cleaning up, remove the event listener. Not a great garbage collection in react/js D:
   }, [textAreaValue]);
 
+  useEffect(() => {
+    if (textAreaRef.current?.innerText == "") {
+      textAreaRef.current.innerHTML = "<br>";
+    }
+  }, [textAreaRef]);
+
   return (
     <form
       className="chat-input-form"
@@ -149,9 +155,7 @@ const ChatInput = forwardRef(({ onSend }: { onSend: () => void }, ref) => {
           id="chatInput"
           ref={textAreaRef}
           onInput={onChange}
-        >
-          <br></br>
-        </div>
+        ></div>
         {isInputBlank && <p className="chat-input-placeholder">Type here...</p>}
         <p className="chat-input-char-limit">
           {isInputBlank ? 0 : textAreaValue.length}/{maxLength}

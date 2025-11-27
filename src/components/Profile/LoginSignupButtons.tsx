@@ -7,6 +7,7 @@ import SignupPanel from "./SignupPanel";
 const LoginSignupButtons = () => {
   const [loginOpened, setLoginOpened] = useState(false);
   const [signupOpened, setSignupOpened] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const handleLoginClick = () => {
     setLoginOpened(!loginOpened);

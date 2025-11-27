@@ -1,6 +1,7 @@
 // Modified from tutorial: https://mobisoftinfotech.com/resources/blog/app-development/supabase-react-typescript-tutorial
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import "../../App.css";
 import { Client } from "../supabase/Client";
 import "./Profile.css";
@@ -13,6 +14,8 @@ const SignupPanel = () => {
   const [passwords_match, setPasswordsMatch] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [signUpLoading, setSignUpLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleSignUp = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,11 +27,36 @@ const SignupPanel = () => {
         email,
         password,
         options: {
-          data: { username: username, profile_image_url: profilePicture.url },
+          captchaToken,
+          data: {
+            username: username,
+            profile_image_url: profilePicture.url,
+          },
         },
       });
       if (error) throw error;
     } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An error occurred during sign up"
+      );
+    } finally {
+      setSignUpLoading(false);
+      if (!turnstileRef.current) return;
+      turnstileRef.current.reset();
+    }
+  };
+
+  const handleSignUpWithGoogle = async () => {
+    Turnstile;
+    try {
+      setError(null);
+      setSignUpLoading(true);
+      Client.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) throw error;
+    } catch (err) {
+      print();
       setError(
         err instanceof Error ? err.message : "An error occurred during sign up"
       );
@@ -42,15 +70,21 @@ const SignupPanel = () => {
     setPasswordsMatch(e.target.value == confirm_password);
   };
 
-  const handleUpdateConfirmPassword = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleUpdateConfirmPassword = (e: ChangeEvent<HTMLInputElement>) => {
     setConfirmPassword(e.target.value);
     setPasswordsMatch(password == e.target.value);
   };
 
   return (
     <form className="signup-panel-form" onSubmit={handleSignUp}>
+      <Turnstile
+        siteKey="0x4AAAAAACDL09dyN0WgJyZL"
+        onSuccess={(token) => {
+          setCaptchaToken(token);
+        }}
+        onExpire={() => setCaptchaToken("")}
+        ref={turnstileRef}
+      />
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -89,7 +123,6 @@ const SignupPanel = () => {
           Password must be at least 6 characters!
         </p>
       )}
-
       <br></br>
       <button
         type="submit"
@@ -104,6 +137,9 @@ const SignupPanel = () => {
         className="login-signup-panel-button"
       >
         {signUpLoading ? "Loading..." : "Sign Up"}
+      </button>
+      <button type="button" onClick={handleSignUpWithGoogle}>
+        Sign up with Google
       </button>
       {error && <div className="error-message">{error}</div>}
     </form>

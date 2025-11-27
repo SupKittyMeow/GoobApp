@@ -75,6 +75,7 @@ const App = () => {
     if (!chatInputRef.current) return;
     if (!clientUserID) return;
     if (!username) return;
+
     const contentText: string = chatInputRef.current.getInputValueToSend();
     if (contentText.trim() != "") {
       // Make sure the content isn't blank!
@@ -84,7 +85,7 @@ const App = () => {
         newUserProfilePicture: userProfilePicture,
         newMessageContent: contentText,
       });
-      socket.emit("message sent", message);
+      socket.emit("message sent", message, session);
       if (!chatWindowRef.current) return;
     }
   };

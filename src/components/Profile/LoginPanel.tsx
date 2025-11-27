@@ -1,6 +1,7 @@
 // Modified from tutorial: https://mobisoftinfotech.com/resources/blog/app-development/supabase-react-typescript-tutorial
 
-import { FormEvent, useState } from "react";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { FormEvent, useRef, useState } from "react";
 import "../../App.css";
 import { Client } from "../supabase/Client";
 import "./Profile.css";
@@ -10,6 +11,8 @@ const LoginPanel = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [logInLoading, setLogInLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const handleLogIn = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,6 +22,7 @@ const LoginPanel = () => {
       const { error } = await Client.auth.signInWithPassword({
         email,
         password,
+        options: { captchaToken },
       });
       if (error) throw error;
     } catch (err) {
@@ -27,12 +31,39 @@ const LoginPanel = () => {
       );
     } finally {
       setLogInLoading(false);
+      if (!turnstileRef.current) return;
+      turnstileRef.current.reset();
+    }
+  };
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      setError(null);
+      setLogInLoading(true);
+
+      const { data, error } = await Client.auth.signInWithOAuth({
+        provider: "google",
+      });
+
+      if (error) throw error;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An error occurred during sign up"
+      );
+    } finally {
+      setLogInLoading(false);
     }
   };
 
   return (
     <form className="login-panel-form" onSubmit={handleLogIn}>
-      {error && <div className="error-message">{error}</div>}
+      <Turnstile
+        siteKey="0x4AAAAAACDL09dyN0WgJyZL"
+        onSuccess={(token) => {
+          setCaptchaToken(token);
+        }}
+        ref={turnstileRef}
+      />
       <input
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -56,6 +87,10 @@ const LoginPanel = () => {
       >
         {logInLoading ? "Loading..." : "Sign In"}
       </button>
+      <button type="button" onClick={handleSignInWithGoogle}>
+        Sign in with Google
+      </button>
+      {error && <div className="error-message">{error}</div>}
     </form>
   );
 };
